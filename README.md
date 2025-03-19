@@ -1,69 +1,73 @@
-import hashlib
-import threading
-import tkinter as tk
-from tkinter import filedialog, messagebox
+This project is a multi-threaded password cracker that attempts to brute-force SHA-256 hashed passwords using a wordlist. It supports large external wordlists, multi-threading for faster cracking, and a graphical user interface (GUI) for ease of use.
 
-# Function to load wordlist
-def load_wordlist():
-    file_path = filedialog.askopenfilename(title="Select Wordlist", filetypes=[("Text files", "*.txt")])
-    return file_path
+Features
 
-# Function to hash and compare words from wordlist
-def crack_password(hash_to_crack, wordlist, status_label):
-    try:
-        with open(wordlist, "r", encoding="latin-1") as file:
-            for index, word in enumerate(file):
-                word = word.strip()
-                hashed_word = hashlib.sha256(word.encode()).hexdigest()
+Uses SHA-256 hashing algorithm
 
-                # Update status every 1000 attempts to keep GUI responsive
-                if index % 1000 == 0:
-                    status_label.config(text=f"Trying: {word}")
-                    root.update_idletasks()
+Multi-threading for improved speed
 
-                if hashed_word == hash_to_crack:
-                    messagebox.showinfo("Success", f"Password Found: {word}")
-                    status_label.config(text="Password Cracked!")
-                    return
-        messagebox.showerror("Failed", "Password Not Found in Wordlist")
-        status_label.config(text="Password Not Found")
-    except FileNotFoundError:
-        messagebox.showerror("Error", "Wordlist file not found")
-    except Exception as e:
-        messagebox.showerror("Error", f"An error occurred: {str(e)}")
+Supports large external wordlists
 
-# Function to start cracking in a new thread
-def start_cracking():
-    hash_input = hash_entry.get().strip()
-    wordlist_path = load_wordlist()
+GUI interface for ease of use
 
-    if not hash_input or not wordlist_path:
-        messagebox.showerror("Error", "Please enter a hash and select a wordlist")
-        return
+Can handle a variety of password character types
 
-    # Update UI before starting thread
-    status_label.config(text="Cracking in progress...")
-    
-    # Start password cracking in a new thread
-    thread = threading.Thread(target=crack_password, args=(hash_input, wordlist_path, status_label))
-    thread.start()
+Requirements
 
-# GUI Setup
-root = tk.Tk()
-root.title("SHA-256 Password Cracker")
+Before running the project, ensure you have the following installed:
 
-# Input field for SHA-256 hash
-tk.Label(root, text="Enter SHA-256 Hash:").pack()
-hash_entry = tk.Entry(root, width=50)
-hash_entry.pack()
+Python 3.x
 
-# Button to start cracking process
-crack_button = tk.Button(root, text="Start Cracking", command=start_cracking)
-crack_button.pack()
+Required Python libraries:
 
-# Status label to show progress
-status_label = tk.Label(root, text="Waiting for input...")
-status_label.pack()
+pip install hashlib tkinter concurrent.futures
 
-# Run GUI
-root.mainloop()
+
+How It Works
+
+The user enters a SHA-256 hash into the GUI.
+
+The program reads through a wordlist and hashes each word.
+
+If a match is found, the password is displayed.
+
+Multi-threading speeds up the process for large wordlists.
+
+Installation and Usage
+
+1. Clone the Repository
+
+git clone https://github.com/yourusername/password-cracker.git
+cd password-cracker
+
+2. Run the Program
+
+python password_cracker.py
+
+3. Provide Input
+
+Enter the SHA-256 hash of the password you want to crack.
+
+Select a wordlist file (e.g., rockyou.txt).
+
+Click "Start" to begin cracking.
+
+Example Usage
+
+If your hash is:
+
+5e884898da28047151d0e56f8dc6292773603d0d6aabbdd6118b756f00442f9
+
+And 'password' is in your wordlist, the program will return:
+
+Password found: password
+
+Wordlists
+
+You can download large wordlists such as:
+
+RockYou.txt (20GB of passwords)
+
+Have I Been Pwned Password List
+
+SecLists (GitHub repository with multiple wordlists)
